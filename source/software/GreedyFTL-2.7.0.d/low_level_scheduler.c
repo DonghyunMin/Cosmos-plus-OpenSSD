@@ -112,7 +112,7 @@ void PushToReqQueue(P_LOW_LEVEL_REQ_INFO lowLevelCmd)
 
 	dieStatusTable->dieStatusEntry[chNo][wayNo].reqQueueEmpty = 0;
 	rear = rqPointer->rqPointerEntry[chNo][wayNo].rear;
-	if(lowLevelCmd->request >= LLSCommand_RxDMA)
+	if(lowLevelCmd->request >= LLSCommand_RxDMA) // Transfer data from HOST to data buffer (WRITE)
 	{
 		reqQueue->reqEntry[rear][chNo][wayNo].devAddr = lowLevelCmd->devAddr;
 		reqQueue->reqEntry[rear][chNo][wayNo].cmdSlotTag = lowLevelCmd->cmdSlotTag;
@@ -122,7 +122,7 @@ void PushToReqQueue(P_LOW_LEVEL_REQ_INFO lowLevelCmd)
 		reqQueue->reqEntry[rear][chNo][wayNo].request = lowLevelCmd->request;
 		rqPointer->rqPointerEntry[chNo][wayNo].rear = (rear + 1) % REQ_QUEUE_DEPTH;
 	}
-	else
+	else // Transfer data from data buffer to HOST (READ)
 	{
 		if(BIT_PER_FLASH_CELL == SLC_MODE)
 		{
@@ -163,7 +163,7 @@ void PushToReqQueue(P_LOW_LEVEL_REQ_INFO lowLevelCmd)
 		reqQueue->reqEntry[rear][chNo][wayNo].statusOption = STATUS_CHECK;
 		reqQueue->reqEntry[rear][chNo][wayNo].request = lowLevelCmd->request;
 		rqPointer->rqPointerEntry[chNo][wayNo].rear = (rear + 1) % REQ_QUEUE_DEPTH;
-	}
+	} // End of else(READ)
 }
 
 int CheckDMA(int chNo, int wayNo)
@@ -1156,7 +1156,7 @@ int ExeLowLevelReqPerCh(int chNo, int firstQueue)
 				idleWay++;
 				wayNo = dieStatusTable->dieStatusEntry[chNo][wayNo].nextWay;
 			}
-		}
+		} // End of (wayNO != 0xf)
 
 		if(idleWay == WAY_NUM)
 			return 0;

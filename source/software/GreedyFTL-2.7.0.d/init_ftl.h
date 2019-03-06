@@ -66,7 +66,9 @@
 
 #ifndef	INIT_FTL_H_
 #define	INIT_FTL_H_
-
+// DH-start on 3/6
+#include <math.h>
+// DH-end
 #include "fmc_driver.h"
 
 #define	SECTOR_SIZE_FTL			4096	//4KB
@@ -94,7 +96,7 @@
 #define	MAX_WAY_NUM				8
 #define	DIE_NUM					(CHANNEL_NUM * WAY_NUM)
 
-#define	SECTOR_NUM_PER_PAGE		(PAGE_SIZE / SECTOR_SIZE_FTL)
+#define	SECTOR_NUM_PER_PAGE		(PAGE_SIZE / SECTOR_SIZE_FTL) // SECTOR_NUM_PER_PAGE == 4
 
 #define	PAGE_NUM_PER_LUN			(PAGE_NUM_PER_BLOCK * BLOCK_NUM_PER_LUN)
 #define	MAX_PAGE_NUM_PER_SLC_LUN		(PAGE_NUM_PER_SLC_BLOCK * MAX_BLOCK_NUM_PER_LUN)
