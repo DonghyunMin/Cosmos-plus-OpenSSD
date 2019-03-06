@@ -78,6 +78,7 @@
 #include "low_level_scheduler.h"
 #include "memory_map.h"
 #include "nvme/host_lld.h"
+#include "nvme/io_access.h"
 #include <assert.h>
 
 struct pmArray* pageMap;

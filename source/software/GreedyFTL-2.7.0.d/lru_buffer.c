@@ -456,7 +456,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 		double entropy = 0.0f;
 		for( idx=0 ; idx<256; idx++){
 			if( bo[idx] != 0){
-				entropy = entropy + bo[idx]/16384 * log(16384/bo[idx]);
+				entropy = entropy + bo[idx]/16384.0f * log(16384.0f/(unsigned int)bo[idx]);
 			}
 		}
 		// DH-end
@@ -573,7 +573,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 		double entropy = 0.0f;
 		for( idx=0 ; idx<256; idx++){
 			if( bo[idx] != 0){
-				entropy = entropy + bo[idx]/16384 * log(16384/bo[idx]);
+				entropy = entropy + bo[idx]/16384.0f * log(16384.0f/(unsigned int)bo[idx]);
 			}
 		}
 		// DH-end
@@ -687,7 +687,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 		double entropy = 0.0f;
 		for( idx=0 ; idx<256; idx++){
 			if( bo[idx] != 0){
-				entropy = entropy + bo[idx]/16384 * log(16384/bo[idx]);
+				entropy = entropy + bo[idx]/16384.0f * log(16384.0f/(unsigned int)bo[idx]);
 			}
 		}
 		// DH-end
