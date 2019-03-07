@@ -86,10 +86,10 @@ void InitChCtlReg()
 	chCtlReg[1] = (V2FMCRegisters*) XPAR_TIGER4NSC_1_BASEADDR;
 	chCtlReg[2] = (V2FMCRegisters*) XPAR_TIGER4NSC_2_BASEADDR;
 	chCtlReg[3] = (V2FMCRegisters*) XPAR_TIGER4NSC_3_BASEADDR;
-	chCtlReg[4] = (V2FMCRegisters*) XPAR_TIGER4NSC_4_BASEADDR;
-	chCtlReg[5] = (V2FMCRegisters*) XPAR_TIGER4NSC_5_BASEADDR;
-	chCtlReg[6] = (V2FMCRegisters*) XPAR_TIGER4NSC_6_BASEADDR;
-	chCtlReg[7] = (V2FMCRegisters*) XPAR_TIGER4NSC_7_BASEADDR;
+//	chCtlReg[4] = (V2FMCRegisters*) XPAR_TIGER4NSC_4_BASEADDR;
+//	chCtlReg[5] = (V2FMCRegisters*) XPAR_TIGER4NSC_5_BASEADDR;
+//	chCtlReg[6] = (V2FMCRegisters*) XPAR_TIGER4NSC_6_BASEADDR;
+//	chCtlReg[7] = (V2FMCRegisters*) XPAR_TIGER4NSC_7_BASEADDR;
 }
 
 void InitFtlMapTable()

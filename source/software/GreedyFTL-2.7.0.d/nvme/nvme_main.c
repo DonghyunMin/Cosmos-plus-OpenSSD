@@ -106,6 +106,7 @@ void nvme_main()
 
 		if(g_nvmeTask.status == NVME_TASK_WAIT_CC_EN)
 		{
+			xil_printf("\r\nNVME_TASK_WAIT_CC_EN\r\n");
 			unsigned int ccEn;
 			ccEn = check_nvme_cc_en();
 			if(ccEn == 1)
@@ -138,6 +139,7 @@ void nvme_main()
 		}
 		else if(g_nvmeTask.status == NVME_TASK_SHUTDOWN)
 		{
+			xil_printf("\r\nNVME_TASK_SHUTDOWN\r\n");
 			NVME_STATUS_REG nvmeReg;
 			nvmeReg.dword = IO_READ32(NVME_STATUS_REG_ADDR);
 			if(nvmeReg.ccShn != 0)
@@ -173,6 +175,7 @@ void nvme_main()
 		}
 		else if(g_nvmeTask.status == NVME_TASK_RESET)
 		{
+			xil_printf("\r\nNVME_TASK_RESET\r\n");
 			unsigned int qID;
 			for(qID = 0; qID < 8; qID++)
 			{

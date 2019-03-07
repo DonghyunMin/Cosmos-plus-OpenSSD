@@ -93,7 +93,7 @@ void dev_irq_handler()
 
 	devReg.dword = IO_READ32(DEV_IRQ_STATUS_REG_ADDR);
 	IO_WRITE32(DEV_IRQ_CLEAR_REG_ADDR, devReg.dword);
-//	xil_printf("IRQ: 0x%X\r\n", devReg.dword);
+	xil_printf("IRQ: 0x%X\r\n", devReg.dword);
 
 	if(devReg.pcieLink == 1)
 	{
@@ -135,6 +135,7 @@ void dev_irq_handler()
 	if(devReg.nvmeCcEn == 1)
 	{
 		NVME_STATUS_REG nvmeReg;
+		xil_printf("OK\r\n");
 		nvmeReg.dword = IO_READ32(NVME_STATUS_REG_ADDR);
 		xil_printf("NVME CC.EN: %d\r\n", nvmeReg.ccEn);
 

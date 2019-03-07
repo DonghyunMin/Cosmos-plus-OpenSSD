@@ -98,7 +98,7 @@ void InitPageMap()
 		for(j=0 ; j<PAGE_NUM_PER_DIE ; j++)
 		{
 			pageMap->pmEntry[i][j].ppn = 0xffffffff;
-
+			pageMap->pmEntry[i][j].bpn = 0xffffffff;
 			pageMap->pmEntry[i][j].valid = 1;
 			pageMap->pmEntry[i][j].lpn = 0x7fffffff;
 		}
@@ -420,11 +420,6 @@ int PrePmRead(P_BUFFER_REQ_INFO bufCmd)
 	LOW_LEVEL_REQ_INFO lowLevelCmd;
 	unsigned int dieNo = bufCmd->lpn % DIE_NUM;
 	unsigned int dieLpn = bufCmd->lpn / DIE_NUM;
-	// DH-start on 3/6
-	unsigned int idx, byte_offset;
-	unsigned int data; // data from DRAM Buffer
-	unsigned char one_byte; // One byte of data
-	// DH-end
 
 	if(bufCmd->subReqSect == SECTOR_NUM_PER_PAGE)
 	{
@@ -454,63 +449,10 @@ int PrePmRead(P_BUFFER_REQ_INFO bufCmd)
 			lowLevelCmd.bufferEntry = bufCmd->bufferEntry;
 			lowLevelCmd.request = V2FCommand_ReadPageTrigger;
 			PushToReqQueue(&lowLevelCmd);
-			// DH - start on 3/5, 3/6
-			unsigned char old_byte[16384]={0,};
-			unsigned char new_byte[16384]={0,};
-			unsigned char bo[256]={0,}; // byte occurrance
-
-			// Here, Check content of old data.
-			ExeLowLevelReq(REQ_QUEUE);
-
-			byte_offset = 0;
-			for( idx = 0 ; idx<4096 ; idx++){
-				data = IO_READ32(BUFFER_ADDR + hitEntry + BUF_ENTRY_SIZE + (idx * 4));
-
-				one_byte = data/4096;	data = data % 4096;
-				old_byte[byte_offset++] = one_byte;
-				one_byte = data/256;	data = data % 256;
-				old_byte[byte_offset++] = one_byte;
-				one_byte = data/16;		data = data % 16;
-				old_byte[byte_offset++] = one_byte;
-				old_byte[byte_offset++] = data;
-			}
-			// DH - end
 
 			lowLevelCmd.request = LLSCommand_RxDMA;
 			PushToReqQueue(&lowLevelCmd);
-			
-			// DH-start on 3/6
-			// Here, Check content of new data.
-			ExeLowLevelReq(REQ_QUEUE);
 
-			byte_offset = 0;
-			for( idx = 0 ; idx<4096 ; idx++){
-				data = IO_READ32(BUFFER_ADDR + hitEntry + BUF_ENTRY_SIZE + (idx * 4));
-				one_byte = data/4096;	data = data % 4096;
-				new_byte[byte_offset++] = one_byte;
-				one_byte = data/256;	data = data % 256;
-				new_byte[byte_offset++] = one_byte;
-				one_byte = data/16;		data = data % 16;
-				new_byte[byte_offset++] = one_byte;
-				new_byte[byte_offset++] = data;
-			}
-
-			// similarity calc
-			unsigned short similarity=0;
-			for( idx=0 ; idx<16384 ; idx++){
-				if( old_byte[idx] != new_byte[idx]){
-					similarity = similarity + 1;
-				}
-				bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
-			}
-			// entropy calc
-			double entropy = 0.0f;
-			for( idx=0 ; idx<256; idx++){
-				if( bo[idx] != 0){
-					entropy = entropy + bo[idx]/16384 * log(16384/bo[idx]);
-				}
-			}
-			// DH-end
 		}
 		else
 		{

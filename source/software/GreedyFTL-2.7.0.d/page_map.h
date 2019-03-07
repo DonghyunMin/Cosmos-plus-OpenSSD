@@ -62,11 +62,12 @@
 
 struct pmEntry {
 	unsigned int ppn;	// Physical Page Number (PPN) to which a logical page is mapped
+
+	// Donghyun Min
+	unsigned int bpn;	// Backup Page Number (BPN) to which a logical page is mapped
+
 	unsigned int valid : 1;	// validity of a physical page
 	unsigned int lpn : 31;	// Logical Page Number (LPN) of a physical page
-	// DH-start on 3/3
-	unsigned int byte_occur[4]; // 
-	// DH-end
 };
 
 struct pmArray {

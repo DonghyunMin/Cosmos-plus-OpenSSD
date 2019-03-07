@@ -50,6 +50,7 @@
 
 #include "init_ftl.h"
 #include "internal_req.h"
+
 #define BUF_ENTRY_NUM_PER_DIE	16
 #define BUF_ENTRY_NUM	(BUF_ENTRY_NUM_PER_DIE * DIE_NUM)
 #define BUF_ENTRY_SIZE	PAGE_SIZE
