@@ -70,11 +70,14 @@
 #include "../lru_buffer.h"
 #include "../low_level_scheduler.h"
 
+
 volatile NVME_CONTEXT g_nvmeTask;
+
 
 void nvme_main()
 {
 	unsigned int exeLlr;
+
 	g_nvmeTask.status = NVME_TASK_IDLE;
 	g_nvmeTask.cacheEn = 0;
 

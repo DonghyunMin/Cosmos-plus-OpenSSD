@@ -420,7 +420,10 @@ int PrePmRead(P_BUFFER_REQ_INFO bufCmd)
 	LOW_LEVEL_REQ_INFO lowLevelCmd;
 	unsigned int dieNo = bufCmd->lpn % DIE_NUM;
 	unsigned int dieLpn = bufCmd->lpn / DIE_NUM;
-
+	// DH-start on 3/6
+			unsigned int idx, byte_offset;
+			unsigned int data; // data from DRAM Buffer
+			// DH-end
 	if(bufCmd->subReqSect == SECTOR_NUM_PER_PAGE)
 	{
 		lowLevelCmd.devAddr = bufCmd->devAddr;
@@ -432,7 +435,49 @@ int PrePmRead(P_BUFFER_REQ_INFO bufCmd)
 		lowLevelCmd.bufferEntry = bufCmd->bufferEntry;
 		lowLevelCmd.request = LLSCommand_RxDMA;
 
+		// DH-start on 3/5
+					ExeLowLevelReq(REQ_QUEUE);
+
+					unsigned char old_byte[4096]={0,};
+					unsigned char new_byte[4096]={0,};
+					unsigned char bo[256]={0,}; // byte occurrance
+
+					byte_offset = 0;
+					for( idx = 0 ; idx<4096 ; idx++){
+						data = IO_READ32(BUFFER_ADDR + lowLevelCmd.bufferEntry * BUF_ENTRY_SIZE + (idx * 4));
+						old_byte[byte_offset++] = data % 0xFF;
+					}
+					// DH-end
 		PushToReqQueue(&lowLevelCmd);
+		// DH-start on 3/5
+								ExeLowLevelReq(REQ_QUEUE);
+
+								byte_offset = 0;
+								for( idx = 0 ; idx<4096 ; idx++){
+									data = IO_READ32(BUFFER_ADDR + lowLevelCmd.bufferEntry * BUF_ENTRY_SIZE + (idx * 4));
+									new_byte[byte_offset++] = data % 0xFF;
+								}
+								// DH-end on 3/5
+
+								// DH-start on 3/6
+								// similarity calc
+								unsigned short similarity=0;
+								//xil_printf("similarity 3 \r\n");
+								for( idx=0 ; idx<4096 ; idx++){
+									if( old_byte[idx] != new_byte[idx]){
+										similarity = similarity + 1;
+									}
+									bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
+								}
+								// entropy calc
+								//xil_printf("entropy 3 \r\n");
+								double entropy = 0.0f;
+								for( idx=0 ; idx<256; idx++){
+									if( bo[idx] != 0){
+										entropy = entropy + bo[idx]/4096.0f * log(4096.0f/(unsigned int)bo[idx]);
+									}
+								}
+								// DH-end
 	}
 	else
 	{

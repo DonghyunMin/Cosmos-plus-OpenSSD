@@ -425,7 +425,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 				// DH-start on 3/6
 				// similarity calc
 				unsigned short similarity=0;
-				xil_printf("similarity 1 \r\n");
+				//xil_printf("similarity 1 \r\n");
 				for( idx=0 ; idx<4096 ; idx++){
 					if( old_byte[idx] != new_byte[idx]){
 						similarity = similarity + 1;
@@ -433,7 +433,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 					bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
 				}
 				// entropy calc
-				xil_printf("entropy 1 \r\n");
+				//xil_printf("entropy 1 \r\n");
 				double entropy = 0.0f;
 				for( idx=0 ; idx<256; idx++){
 					if( bo[idx] != 0){
@@ -527,7 +527,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 							// DH-start on 3/6
 							// similarity calc
 							unsigned short similarity=0;
-							xil_printf("similarity 2 \r\n");
+							//xil_printf("similarity 2 \r\n");
 							for( idx=0 ; idx<4096 ; idx++){
 								if( old_byte[idx] != new_byte[idx]){
 									similarity = similarity + 1;
@@ -535,7 +535,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 								bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
 							}
 							// entropy calc
-							xil_printf("entropy 2 \r\n");
+							//xil_printf("entropy 2 \r\n");
 							double entropy = 0.0f;
 							for( idx=0 ; idx<256; idx++){
 								if( bo[idx] != 0){
@@ -627,7 +627,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 						// DH-start on 3/6
 						// similarity calc
 						unsigned short similarity=0;
-						xil_printf("similarity 3 \r\n");
+						//xil_printf("similarity 3 \r\n");
 						for( idx=0 ; idx<4096 ; idx++){
 							if( old_byte[idx] != new_byte[idx]){
 								similarity = similarity + 1;
@@ -635,7 +635,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 							bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
 						}
 						// entropy calc
-						xil_printf("entropy 3 \r\n");
+						//xil_printf("entropy 3 \r\n");
 						double entropy = 0.0f;
 						for( idx=0 ; idx<256; idx++){
 							if( bo[idx] != 0){
