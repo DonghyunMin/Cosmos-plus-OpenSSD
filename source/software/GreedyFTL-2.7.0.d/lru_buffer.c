@@ -50,9 +50,6 @@
 #include	"memory_map.h"
 #include	"nvme/host_lld.h"
 #include	"low_level_scheduler.h"
-// DH-start on 3/5
-#include	"nvme/io_access.h"
-// DH-end
 
 struct bufArray* bufMap;
 struct bufLruArray* bufLruList;
@@ -370,10 +367,7 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 	LOW_LEVEL_REQ_INFO lowLevelCmd;
 	unsigned int tempLpn, counter, hitEntry, dmaIndex, devAddr, subReqSect,  dieNo;
 	unsigned int loop = ((hostCmd->curSect % SECTOR_NUM_PER_PAGE) + hostCmd->reqSect) / SECTOR_NUM_PER_PAGE;
-	// DH-start on 3/6
-		unsigned int idx, byte_offset;
-		unsigned int data; // data from DRAM Buffer
-		// DH-end
+
 	counter = 0;
 	dmaIndex = 0;
 	tempLpn = hostCmd->curSect / SECTOR_NUM_PER_PAGE;
@@ -397,50 +391,10 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 		lowLevelCmd.subReqSect = subReqSect;
 		lowLevelCmd.bufferEntry = hitEntry;
 		lowLevelCmd.request = LLSCommand_RxDMA;
-		// DH-start on 3/5
-			ExeLowLevelReq(REQ_QUEUE);
 
-			unsigned char old_byte[4096]={0,};
-			unsigned char new_byte[4096]={0,};
-			unsigned char bo[256]={0,}; // byte occurrance
-
-			byte_offset = 0;
-			for( idx = 0 ; idx<4096 ; idx++){
-				data = IO_READ32(BUFFER_ADDR + hitEntry * BUF_ENTRY_SIZE + (idx * 4));
-				old_byte[byte_offset++] = data % 0xFF;
-			}
-			// DH-end
 		PushToReqQueue(&lowLevelCmd);
 		dmaIndex += lowLevelCmd.subReqSect;
-		// DH-start on 3/5
-				ExeLowLevelReq(REQ_QUEUE);
 
-				byte_offset = 0;
-				for( idx = 0 ; idx<4096 ; idx++){
-					data = IO_READ32(BUFFER_ADDR + hitEntry * BUF_ENTRY_SIZE + (idx * 4));
-					new_byte[byte_offset++] = data % 0xFF;
-				}
-				// DH-end on 3/5
-
-				// DH-start on 3/6
-				// similarity calc
-				unsigned short similarity=0;
-				//xil_printf("similarity 1 \r\n");
-				for( idx=0 ; idx<4096 ; idx++){
-					if( old_byte[idx] != new_byte[idx]){
-						similarity = similarity + 1;
-					}
-					bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
-				}
-				// entropy calc
-				//xil_printf("entropy 1 \r\n");
-				double entropy = 0.0f;
-				for( idx=0 ; idx<256; idx++){
-					if( bo[idx] != 0){
-						entropy = entropy + bo[idx]/4096.0f * log(4096.0f/(unsigned int)bo[idx]);
-					}
-				}
-				// DH-end
 		reservedReq = 1;
 	}
 	else
@@ -498,51 +452,10 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 			lowLevelCmd.subReqSect = subReqSect;
 			lowLevelCmd.bufferEntry = hitEntry;
 			lowLevelCmd.request = LLSCommand_RxDMA;
-			// DH-start on 3/5
-				ExeLowLevelReq(REQ_QUEUE);
-
-				unsigned char old_byte[4096]={0,};
-				unsigned char new_byte[4096]={0,};
-				unsigned char bo[256]={0,}; // byte occurrance
-
-				byte_offset = 0;
-				for( idx = 0 ; idx<4096 ; idx++){
-					data = IO_READ32(BUFFER_ADDR + hitEntry * BUF_ENTRY_SIZE + (idx * 4));
-					old_byte[byte_offset++] = data % 0xFF;
-				}
-				// DH-end
 
 			PushToReqQueue(&lowLevelCmd);
 			dmaIndex += lowLevelCmd.subReqSect;
-			// DH-start on 3/5
-							ExeLowLevelReq(REQ_QUEUE);
 
-							byte_offset = 0;
-							for( idx = 0 ; idx<4096 ; idx++){
-								data = IO_READ32(BUFFER_ADDR + hitEntry * BUF_ENTRY_SIZE + (idx * 4));
-								new_byte[byte_offset++] = data % 0xFF;
-							}
-							// DH-end on 3/5
-
-							// DH-start on 3/6
-							// similarity calc
-							unsigned short similarity=0;
-							//xil_printf("similarity 2 \r\n");
-							for( idx=0 ; idx<4096 ; idx++){
-								if( old_byte[idx] != new_byte[idx]){
-									similarity = similarity + 1;
-								}
-								bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
-							}
-							// entropy calc
-							//xil_printf("entropy 2 \r\n");
-							double entropy = 0.0f;
-							for( idx=0 ; idx<256; idx++){
-								if( bo[idx] != 0){
-									entropy = entropy + bo[idx]/4096.0f * log(4096.0f/(unsigned int)bo[idx]);
-								}
-							}
-							// DH-end
 			reservedReq = 1;
 		}
 		else
@@ -599,50 +512,10 @@ void LRUBufWrite(P_HOST_REQ_INFO hostCmd)
 		lowLevelCmd.subReqSect = subReqSect;
 		lowLevelCmd.bufferEntry = hitEntry;
 		lowLevelCmd.request = LLSCommand_RxDMA;
-		// DH-start on 3/5
-			ExeLowLevelReq(REQ_QUEUE);
 
-			unsigned char old_byte[4096]={0,};
-			unsigned char new_byte[4096]={0,};
-			unsigned char bo[256]={0,}; // byte occurrance
-
-			byte_offset = 0;
-			for( idx = 0 ; idx<4096 ; idx++){
-				data = IO_READ32(BUFFER_ADDR + hitEntry * BUF_ENTRY_SIZE + (idx * 4));
-				old_byte[byte_offset++] = data % 0xFF;
-			}
-			// DH-end
 		PushToReqQueue(&lowLevelCmd);
 		dmaIndex += lowLevelCmd.subReqSect;
-		// DH-start on 3/5
-						ExeLowLevelReq(REQ_QUEUE);
 
-						byte_offset = 0;
-						for( idx = 0 ; idx<4096 ; idx++){
-							data = IO_READ32(BUFFER_ADDR + hitEntry * BUF_ENTRY_SIZE + (idx * 4));
-							new_byte[byte_offset++] = data % 0xFF;
-						}
-						// DH-end on 3/5
-
-						// DH-start on 3/6
-						// similarity calc
-						unsigned short similarity=0;
-						//xil_printf("similarity 3 \r\n");
-						for( idx=0 ; idx<4096 ; idx++){
-							if( old_byte[idx] != new_byte[idx]){
-								similarity = similarity + 1;
-							}
-							bo[new_byte[idx]] = bo[new_byte[idx]] + 1;
-						}
-						// entropy calc
-						//xil_printf("entropy 3 \r\n");
-						double entropy = 0.0f;
-						for( idx=0 ; idx<256; idx++){
-							if( bo[idx] != 0){
-								entropy = entropy + bo[idx]/4096.0f * log(4096.0f/(unsigned int)bo[idx]);
-							}
-						}
-						// DH-end
 		reservedReq = 1;
 	}
 	else

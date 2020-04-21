@@ -68,12 +68,7 @@
 #define	INIT_FTL_H_
 
 #include "fmc_driver.h"
-// DH-start on 3/6
-#include <math.h>
-// DH-end
-// DH-start on 3/8
-#include <time.h>
-// DH-end
+
 #define	SECTOR_SIZE_FTL			4096	//4KB
 
 #define	PAGE_SIZE				16384	//16KB

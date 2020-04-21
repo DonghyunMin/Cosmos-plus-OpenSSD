@@ -53,21 +53,17 @@
 #include "xil_printf.h"
 #include "debug.h"
 #include "io_access.h"
+
+#include "nvme.h"
+#include "host_lld.h"
+#include "nvme_io_cmd.h"
 // DH-start
 #include "xtime_l.h"
 #include <time.h>
 // DH-end
-#include "nvme.h"
-#include "host_lld.h"
-#include "nvme_io_cmd.h"
-
 #include "../lru_buffer.h"
-#define MAX_LATENCY_REQ_PERIOD 1000
-// DH-start
-double latency = 0.0f;
-unsigned short totreqsize =0;
-unsigned int periodnum = 0;
-// DH-end
+#define MAX_LATENCY_REQ_PERIOD 1
+
 void handle_nvme_io_read(unsigned int cmdSlotTag, NVME_IO_COMMAND *nvmeIOCmd)
 {
 	IO_READ_COMMAND_DW12 readInfo12;
@@ -114,7 +110,7 @@ void handle_nvme_io_write(unsigned int cmdSlotTag, NVME_IO_COMMAND *nvmeIOCmd)
 	/*
 	if(writeInfo12.FUA == 1)
 		xil_printf("write FUA\r\n");
-		*/
+	*/
 
 	startLba[0] = nvmeIOCmd->dword[10];
 	startLba[1] = nvmeIOCmd->dword[11];
@@ -138,11 +134,12 @@ void handle_nvme_io_cmd(NVME_COMMAND *nvmeCmd)
 	NVME_IO_COMMAND *nvmeIOCmd;
 	NVME_COMPLETION nvmeCPL;
 	unsigned int opc;
-
 	// DH-start on 3/8
 	XTime tStart, tEnd;
+	double latency = 0.0f;
+	unsigned short totreqsize =0;
+	unsigned int periodnum = 0;
 	// DH-end
-
 	nvmeIOCmd = (NVME_IO_COMMAND*)nvmeCmd->cmdDword;
 	opc = (unsigned int)nvmeIOCmd->OPC;
 
@@ -158,28 +155,42 @@ void handle_nvme_io_cmd(NVME_COMMAND *nvmeCmd)
 		}
 		case IO_NVM_WRITE:
 		{
-			//  xil_printf("IO Write Command\r\n");
+			//xil_printf("IO Write Command\r\n");
 			// DH-start on 3/8
-			XTime_GetTime(&tStart);
-			handle_nvme_io_write(nvmeCmd->cmdSlotTag, nvmeIOCmd);
-			XTime_GetTime(&tEnd);
-			latency = latency + (double)(tEnd - tStart)/(COUNTS_PER_SECOND/1000000);
-			totreqsize = totreqsize + 1;
-			//xil_printf("tor %d, tstart %d, tEnd %d,max_latency_req_period %d \r\n",totreqsize, tStart,tEnd,MAX_LATENCY_REQ_PERIOD);
+						XTime_GetTime(&tStart);
+						handle_nvme_io_write(nvmeCmd->cmdSlotTag, nvmeIOCmd);
+						XTime_GetTime(&tEnd);
+						latency = latency + (double)(tEnd - tStart)/(COUNTS_PER_SECOND/1000000);
+						totreqsize = totreqsize + 1;
 
-			if( totreqsize >= MAX_LATENCY_REQ_PERIOD ){
-				xil_printf("[%d] latency %d \r\n", periodnum, (unsigned int)(latency/totreqsize));
-				periodnum = periodnum + 1;
-				totreqsize = 0;
-				latency = 0.0f;
-			}
-			// DH-end
+						if( totreqsize >= MAX_LATENCY_REQ_PERIOD ){
+							xil_printf("[%d] WRITE %d \r\n", periodnum, (unsigned int)(latency/totreqsize));
+							periodnum = periodnum + 1;
+							totreqsize = 0;
+							latency = 0.0f;
+						}
+						// DH-end
+
 			break;
 		}
 		case IO_NVM_READ:
 		{
 			//xil_printf("IO Read Command\r\n");
-			handle_nvme_io_read(nvmeCmd->cmdSlotTag, nvmeIOCmd);
+			// DH-start on 3/8
+									XTime_GetTime(&tStart);
+									handle_nvme_io_read(nvmeCmd->cmdSlotTag, nvmeIOCmd);
+									XTime_GetTime(&tEnd);
+									latency = latency + (double)(tEnd - tStart)/(COUNTS_PER_SECOND/1000000);
+									totreqsize = totreqsize + 1;
+
+									if( totreqsize >= MAX_LATENCY_REQ_PERIOD ){
+										xil_printf("[%d] READ %d \r\n", periodnum, (unsigned int)(latency/totreqsize));
+										periodnum = periodnum + 1;
+										totreqsize = 0;
+										latency = 0.0f;
+									}
+									// DH-end
+
 			break;
 		}
 		default:
